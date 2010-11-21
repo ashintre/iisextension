@@ -1,0 +1,3 @@
+content xulschoolhello chrome/content/
+locale xulschoolhello en-us chrome/content/
+overlay chrome://browser/content/browser.xul chrome://xulschoolhello/content/browserOverlay.xul
