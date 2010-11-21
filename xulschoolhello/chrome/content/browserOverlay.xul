@@ -1,0 +1,26 @@
+<?xml version="1.0"?>  
+
+<!DOCTYPE overlay SYSTEM "chrome://xulschoolhello/chrome/locale/browserOverlay.dtd" >
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"> 
+<script type="application/x-javascript"
+	src="chrome://xulschoolhello/content/browserOverlay.js" />
+	
+
+<menubar id="main-menubar">
+  <menu id="xulschoolhello-hello-menu" label="Random_Label"
+    insertafter="helpMenu">
+    <menupopup>
+      <menuitem id="xulschoolhello-hello-menu-item"
+        label="Random_Label_MenuItem"        
+        oncommand="XULSchoolChrome.BrowserOverlay.sayHello(event);" />
+    </menupopup>
+  </menu>
+</menubar>
+
+
+<statusbar id="status-bar">
+ <statusbarpanel id="my-panel" label="Hello, World"  />
+</statusbar>
+
+</overlay>
