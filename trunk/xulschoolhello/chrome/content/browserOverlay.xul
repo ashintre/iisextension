@@ -5,8 +5,9 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"> 
 <script type="application/x-javascript"
 	src="chrome://xulschoolhello/content/browserOverlay.js" />
+<script type="application/x-javascript"
+	src="chrome://xulschoolhello/content/overlay.js" />
 	
-
 <menubar id="main-menubar">
   <menu id="xulschoolhello-hello-menu" label="Random_Label"
     insertafter="helpMenu">
