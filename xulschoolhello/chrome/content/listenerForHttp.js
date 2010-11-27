@@ -100,10 +100,7 @@ TracingListener.prototype =
 	var temp = new Array();
 	var i = 0;
 	//check response for script tags and strip any strip tags outside of token
-	if( (responseSource.indexOf("<html>") != -1) || (responseSource.indexOf("function") !=-1) ) { 
-
-		window.alert("Processing Response");
-
+	if( (responseSource.indexOf("<html>") != -1) || (responseSource.indexOf("function") !=-1) ) {
 		var j  = -1;
 
 		while(i < responseSource.toString.length() ) {
