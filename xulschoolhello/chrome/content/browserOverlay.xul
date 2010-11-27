@@ -6,7 +6,7 @@
 <script type="application/x-javascript"
 	src="chrome://xulschoolhello/content/browserOverlay.js" />
 <script type="application/x-javascript"
-	src="chrome://xulschoolhello/content/overlay.js" />
+	src="chrome://xulschoolhello/content/listenerForHttp.js" />
 	
 <menubar id="main-menubar">
   <menu id="xulschoolhello-hello-menu" label="Random_Label"
@@ -19,9 +19,8 @@
   </menu>
 </menubar>
 
-
 <statusbar id="status-bar">
- <statusbarpanel id="my-panel" label="Hello, World"  />
+ <statusbarpanel id="my-panel" label="Hello, World!!!"  />
 </statusbar>
 
 </overlay>
