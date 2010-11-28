@@ -82,7 +82,6 @@ TracingListener.prototype =
         var responseSource = this.receivedData.join();
 	alert(responseSource);
         responseSource = this.processResponse(responseSource);
-	alert(responseSource);
         this.originalListener.onStopRequest(request, context, statusCode);
     },
 
@@ -103,21 +102,14 @@ TracingListener.prototype =
 	if( (responseSource.indexOf("<html>") != -1) || (responseSource.indexOf("function") !=-1) ) {
 		var j  = -1;
 
-		alert("ResponseSource length is " + responseSource.length);
-
-		while(i < responseSource.length ) {
-			alert("in While of " + (j+1) );
+			while(i < responseSource.length ) {
 			j++;
 			temp[j] = "";
 			var checkScriptTagB = responseSource.indexOf("<script>");
-			alert("CSTB = " + checkScriptTagB);
 			var checkScriptTagE = responseSource.indexOf("</script>");
-			alert("CSTE = " + checkScriptTagE);
 			var checkTokenB = responseSource.indexOf("<IIS8803_RN>");
-			alert("CTB = " + checkTokenB);
 			var checkTokenE	= responseSource.indexOf("</IIS8803_RN>");
-			alert("CTE = " + checkTokenE);
-
+		
 			if( (checkTokenB < checkScriptTagB) && (checkTokenE > checkScriptTagE) ) {
 				alert("In if!");
 				temp[j] = responseSource.substring(i, checkToken - 1);	
@@ -130,7 +122,7 @@ TracingListener.prototype =
 			}
 
 			alert("Temp[j] is " + temp[j]);
-			temp[j] = temp[j] & responseSource.substring(checkScriptTagE + 1,responseSource.length);
+			temp[j] = temp[j] + responseSource.substring(checkScriptTagE + 1,responseSource.length);
 			i = i + checkScriptTagE + 1;
 			window.alert("i value is " + i);
 			window.alert("Temp of j now is" + temp[j]);
