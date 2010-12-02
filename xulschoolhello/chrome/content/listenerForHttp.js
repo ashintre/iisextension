@@ -122,8 +122,10 @@ TracingListener.prototype =
 			}
 
 			alert("Temp[j] is " + temp[j]);
-			temp[j] = temp[j] + responseSource.substring(checkScriptTagE + 1,responseSource.length);
-			i = i + checkScriptTagE + 1;
+			temp[j] = temp[j] & responseSource.substring(checkScriptTagE + 1,responseSource.length);
+			//window.alert("i value is " + i);
+			i = i + checkScriptTagE;
+			i = i + 1;
 			window.alert("i value is " + i);
 			window.alert("Temp of j now is" + temp[j]);
 		} 							
