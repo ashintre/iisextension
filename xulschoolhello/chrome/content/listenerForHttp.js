@@ -101,39 +101,50 @@ TracingListener.prototype =
 	//check response for script tags and strip any strip tags outside of token
 	if( (responseSource.indexOf("<html>") != -1) || (responseSource.indexOf("function") !=-1) ) {
 		var j  = -1;
-
-			while(i < responseSource.length ) {
+//			window.alert("checkScriptTagB " + checkScriptTagB  + checkScriptTagE + "checkTokenB  : " + checkTokenB + checkTokenE	 );
+			
+		while(i < responseSource.length ) {
 			j++;
 			temp[j] = "";
+			
 			var checkScriptTagB = responseSource.indexOf("<script>");
 			var checkScriptTagE = responseSource.indexOf("</script>");
 			var checkTokenB = responseSource.indexOf("<IIS8803_RN>");
 			var checkTokenE	= responseSource.indexOf("</IIS8803_RN>");
-		
+			
 			if( (checkTokenB < checkScriptTagB) && (checkTokenE > checkScriptTagE) ) {
-				alert("In if!");
-				temp[j] = responseSource.substring(i, checkToken - 1);	
-				temp[j] = temp[j] & responseSource.substring(checkScriptTagB,checkScriptTagE);	
-
+				//alert("In if!");
+				//temp[j] = responseSource.substring(i, checkToken - 1);	
+				//temp[j] = temp[j] & responseSource.substring(checkScriptTagB,checkScriptTagE);	
+				
+				responseSource.replace("<IIS8803_RN>","");
+				responseSource.replace("</IIS8803_RN>","");
 			}
 			else {
-				alert("In else");
-				temp[j] = responseSource.substring(i,checkScriptTagB - 1);
+				//alert("In else");
+				temp[j] = responseSource.substring(checkScriptTagB - 1, checkScriptTagE + 9);
+				responseSource.replace(temp[j],"");
 			}
 
-			alert("Temp[j] is " + temp[j]);
-			temp[j] = temp[j] & responseSource.substring(checkScriptTagE + 1,responseSource.length);
+			/* alert("Temp[j] is " + temp[j]);
+			//alert("RS is " + responseSource.substring(checkScriptTagE + 9, responseSource.length) );
+			temp[j] = temp[j] & responseSource.substring(checkScriptTagE + 9, responseSource.length);
 			//window.alert("i value is " + i);
 			i = i + checkScriptTagE;
-			i = i + 1;
+			i = i + 9;
 			window.alert("i value is " + i);
 			window.alert("Temp of j now is" + temp[j]);
+			responseSource = temp[j];
+			*/
+			//window.alert("RS is " + responseSource);
+			
 		} 							
 
-		responseSource = "";
+/*		responseSource = "";
 
 		for(i = 0; i < j ; i ++)
 			responseSource = responseSource + temp[i];
+*/
 	}
 	return responseSource;
     }	
