@@ -1,11 +1,26 @@
 window.addEventListener("load", function() { myExtension.init(); }, false);
 
 //var checkLoadValue = "0" + window.content.document.location.href; 
+function getTopLevelDomain(domain)
+{	
+	if(domain != null)
+	{
+		var domainArray = domain.split(".");	
+		if(domainArray[domainArray.length - 1].length == 2)
+		{
+			return "http://.." + domainArray[domainArray.length - 3] + "." + domainArray[domainArray.length - 2] + "." + domainArray[domainArray.length - 1];
+		}
+		else
+		{
+			return "http://.." + domainArray[domainArray.length - 2] + "." + domainArray[domainArray.length - 1];
+		}
+	}	
+}
 
 var myExtension = {
   //var checkLoadValue = "0" + window.content.document.location.href; 
   init: function() {
-	alert("In script!");
+	//alert("In script!");
     	var appcontent = document.getElementById("appcontent");   // browser
  	if(appcontent)
       		appcontent.addEventListener("DOMContentLoaded", myExtension.onPageLoad, true);
@@ -20,7 +35,6 @@ var myExtension = {
 	//alert("checkLoadValue is " + checkLoadValue);
 	
 	var currentLoc = window.content.document.location.href;	
-	
 	if(doc.nodeName == "#document") {
 
 		//Set a Cookie
@@ -31,21 +45,23 @@ var myExtension = {
 		var ios = Components
   			.classes["@mozilla.org/network/io-service;1"]
   			.getService(Components.interfaces.nsIIOService);
-		var cookieUri = ios
-  			.newURI(window.content.document.location.href, null, null);
+		var topLevelDomain = getTopLevelDomain(window.content.document.domain);
+		alert(topLevelDomain);
+		var cookieUri = ios.newURI(topLevelDomain, null, null);
+		
 		var cookieSvc = Components
   			.classes["@mozilla.org/cookieService;1"]
   			.getService(Components.interfaces.nsICookieService);
-
+		
 		if(!cookieSet) {
 		//	alert("In if");
 			cookieSvc.setCookieString(cookieUri, null, ";" + "RANDOM_NUMBER="+random_number, null);
-			window.alert("The cookie is " + window.content.document.cookie);
+			//window.alert("Not set: The cookie is " + window.content.document.cookie);
 		}
 		else {
 		//	alert("In else : " + cookieSet );
 			cookieSvc.setCookieString(cookieUri, null, "RANDOM_NUMBER="+random_number, null);
-			window.alert("The cookie is " + window.content.document.cookie);						
+			//window.alert("Set: The cookie is " + window.content.document.cookie);						
 		}	    	
 		// add event listener for page unload 
     		aEvent.originalTarget.defaultView.addEventListener("unload", function(){ myExtension.onPageUnload(); }, true); 
@@ -63,6 +79,4 @@ var myExtension = {
 //        alert("page unloaded:" + doc.location.href);
 //    }
 //}
-
-
 }
