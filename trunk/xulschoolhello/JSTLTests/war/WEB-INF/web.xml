@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://java.sun.com/xml/ns/javaee"
+xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">	
+
+	<servlet>
+		<servlet-name>JSTLTests</servlet-name>
+		<servlet-class>com.gatech.jstlTests.JSTLTestsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>JSTLTests</servlet-name>
+		<url-pattern>/jstltests</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>LoadTarget</servlet-name>
+		<servlet-class>com.gatech.jstlTests.LoadTarget</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LoadTarget</servlet-name>
+		<url-pattern>/loadTarget</url-pattern>
+	</servlet-mapping>
+	
+	<jsp-config>
+		<taglib>
+			<taglib-uri>customTag</taglib-uri>   
+    		<taglib-location>/WEB-INF/tlds/trustedCodeTag.tld</taglib-location>    		 
+		</taglib>
+		<jsp-property-group>
+			<url-pattern>*.jsp</url-pattern>
+			<el-ignored>false</el-ignored>
+		</jsp-property-group>
+	</jsp-config>	
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+</web-app>
