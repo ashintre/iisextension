@@ -46,28 +46,54 @@ observerService.addObserver(httpRequestObserver,
 function TracingListener() {
 }
 
+var myOffset = 0;
 TracingListener.prototype =
 {
     originalListener: null,
-    receivedData: [],   // array for incoming data.
+    receivedData: [],   // array for incoming data.	
     onDataAvailable: function(request, context, inputStream, offset, count)
     {
-	//alert("in onDataAvailable");
-        var binaryInputStream = CCIN("@mozilla.org/binaryinputstream;1", "nsIBinaryInputStream");
-        var storageStream = CCIN("@mozilla.org/storagestream;1", "nsIStorageStream");
-        var binaryOutputStream = CCIN("@mozilla.org/binaryoutputstream;1", "nsIBinaryOutputStream");
-
+        var binaryInputStream = CCIN("@mozilla.org/binaryinputstream;1", "nsIBinaryInputStream");   
         binaryInputStream.setInputStream(inputStream);
-        storageStream.init(8192, count, null);
-        binaryOutputStream.setOutputStream(storageStream.getOutputStream(0));
-
+        
         // Copy received data as they come.
         var data = binaryInputStream.readBytes(count);
+		
+		if( (data.indexOf("<html>") != -1) || (data.indexOf("function") !=-1) ) {
+			data = this.processResponse(data);
+			var savefile = "C:\\LetsSee\\Test.txt";
+				try {
+				var file = Components.classes["@mozilla.org/file/local;1"]
+					.createInstance(Components.interfaces.nsILocalFile);
+				file.initWithPath( savefile );
+				if ( file.exists() == false ) { 
+					file.create( Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420 );
+				}
+				var outputStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
+					.createInstance( Components.interfaces.nsIFileOutputStream );
+				outputStream.init( file, 0x04 | 0x08 | 0x10, 420, 0 );
+				outputStream.write( data, data.length );
+				outputStream.close();
+				alert("1");
+				} catch (e) {
+					alert("Exception Occured! " + e);
+				}
+		}
+		/*alert("Count is " + count);
+		alert(data);
+		alert("Data length is " + data.length);*/
+		
+		var storageStream = CCIN("@mozilla.org/storagestream;1", "nsIStorageStream");
+        storageStream.init(8192, count, null);
+
+		var binaryOutputStream = CCIN("@mozilla.org/binaryoutputstream;1", "nsIBinaryOutputStream");        
+        binaryOutputStream.setOutputStream(storageStream.getOutputStream(0));
+	
+        binaryOutputStream.writeBytes(data, data.length);
         this.receivedData.push(data);
 
-        binaryOutputStream.writeBytes(data, count);
-
-        this.originalListener.onDataAvailable(request, context, storageStream.newInputStream(0), offset, count);
+        this.originalListener.onDataAvailable(request, context, storageStream.newInputStream(0), myOffset, data.length);
+		myOffset = myOffset + data.length;
     },
 
     onStartRequest: function(request, context) {
@@ -76,76 +102,50 @@ TracingListener.prototype =
     },
 
     onStopRequest: function(request, context, statusCode)
-    {
-        // Get entire response
-	//alert("in onStopRequest");
-        var responseSource = this.receivedData.join();
-	alert(responseSource);
-        responseSource = this.processResponse(responseSource);
-        this.originalListener.onStopRequest(request, context, statusCode);
+    {       
+	var responseSource = this.receivedData.join();
+	//alert("Initial response " + responseSource);		
+
+	this.originalListener.onStopRequest(request, context, statusCode);
     },
 
     QueryInterface: function (aIID) {
-	//alert("in QueryInterface");
-        if (aIID.equals(Ci.nsIStreamListener) ||
-            aIID.equals(Ci.nsISupports)) {
+	if (aIID.equals(Ci.nsIStreamListener) ||
+             aIID.equals(Ci.nsISupports)) {
             return this;
         }
         throw Components.results.NS_NOINTERFACE;
     },
 
     processResponse: function(responseSource) {
-
-	var temp = new Array();
-	var i = 0;
-	//check response for script tags and strip any strip tags outside of token
+	
 	if( (responseSource.indexOf("<html>") != -1) || (responseSource.indexOf("function") !=-1) ) {
-		var j  = -1;
-//			window.alert("checkScriptTagB " + checkScriptTagB  + checkScriptTagE + "checkTokenB  : " + checkTokenB + checkTokenE	 );
-			
-		while(i < responseSource.length ) {
-			j++;
-			temp[j] = "";
-			
-			var checkScriptTagB = responseSource.indexOf("<script>");
-			var checkScriptTagE = responseSource.indexOf("</script>");
-			var checkTokenB = responseSource.indexOf("<IIS8803_RN>");
-			var checkTokenE	= responseSource.indexOf("</IIS8803_RN>");
-			
-			if( (checkTokenB < checkScriptTagB) && (checkTokenE > checkScriptTagE) ) {
-				//alert("In if!");
-				//temp[j] = responseSource.substring(i, checkToken - 1);	
-				//temp[j] = temp[j] & responseSource.substring(checkScriptTagB,checkScriptTagE);	
-				
-				responseSource.replace("<IIS8803_RN>","");
-				responseSource.replace("</IIS8803_RN>","");
+		var temp = new Array();
+		var i = 0;
+		var toBeIncluded = "";
+		temp = responseSource.split("script>");
+		//temp = responseSource.split(/[\\]*script[]*>/);
+		//temp = responseSource.split(/[sS][cC][Rr][iI][Pp][tT][\w\W]*>/);
+		//temp = responseSource.split(/script>/);
+		//alert(temp.length);
+		
+		for(i=0; i < temp.length; i++) {
+			if(i%2!=0) {
+				if(temp[i-1].indexOf("<IIS8803_RN>") > -1) {
+					toBeIncluded = toBeIncluded + temp[i].subString(0,temp[i].length -2); 
+				}	
 			}
 			else {
-				//alert("In else");
-				temp[j] = responseSource.substring(checkScriptTagB - 1, checkScriptTagE + 9);
-				responseSource.replace(temp[j],"");
+				toBeIncluded = toBeIncluded + temp[i].substring(0,temp[i].length -1);
 			}
-
-			/* alert("Temp[j] is " + temp[j]);
-			//alert("RS is " + responseSource.substring(checkScriptTagE + 9, responseSource.length) );
-			temp[j] = temp[j] & responseSource.substring(checkScriptTagE + 9, responseSource.length);
-			//window.alert("i value is " + i);
-			i = i + checkScriptTagE;
-			i = i + 9;
-			window.alert("i value is " + i);
-			window.alert("Temp of j now is" + temp[j]);
-			responseSource = temp[j];
-			*/
-			//window.alert("RS is " + responseSource);
-			
-		} 							
-
-/*		responseSource = "";
-
-		for(i = 0; i < j ; i ++)
-			responseSource = responseSource + temp[i];
-*/
+			//alert("toBeIncluded now is " + toBeIncluded);
+		}
+		toBeIncluded.replace("<IIS8803_RN>","");
+		toBeIncluded.replace("</IIS8803_RN>","");
+		responseSource = toBeIncluded + ">";
 	}
+	//alert(responseSource);	
 	return responseSource;
     }	
+
 }
