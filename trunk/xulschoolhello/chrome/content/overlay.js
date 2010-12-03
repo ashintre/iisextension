@@ -50,16 +50,14 @@ var myExtension = {
 		
 		var cookieSvc = Components.classes["@mozilla.org/cookieService;1"].getService(Components.interfaces.nsICookieService);
 		
-		alert(cookieSvc.getCookieString(cookieUri, null));
+		//alert(cookieSvc.getCookieString(cookieUri, null));
 		if(cookieSvc.getCookieString(cookieUri, null).indexOf("XAPITTT_Trusted_Token") == -1)
 		{
-			if(!cookieSet) {
-			alert("If");
+			if(!cookieSet) {			
 				cookieSvc.setCookieString(cookieUri, null, "XAPITTT_Trusted_Token="+random_number+ "; domain=" + topLevelDomain, null);
 				//window.alert("Not set: The cookie is " + window.content.document.cookie);
 			}
-			else {			
-			alert("Else");
+			else {						
 				cookieSvc.setCookieString(cookieUri, null, "XAPITTT_Trusted_Token="+random_number+ "; domain=" + topLevelDomain, null);							
 			}
 		}		
