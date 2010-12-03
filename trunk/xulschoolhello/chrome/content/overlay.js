@@ -8,11 +8,11 @@ function getTopLevelDomain(domain)
 		var domainArray = domain.split(".");	
 		if(domainArray[domainArray.length - 1].length == 2)
 		{
-			return "http://.." + domainArray[domainArray.length - 3] + "." + domainArray[domainArray.length - 2] + "." + domainArray[domainArray.length - 1];
+			return "." + domainArray[domainArray.length - 3] + "." + domainArray[domainArray.length - 2] + "." + domainArray[domainArray.length - 1];
 		}
 		else
 		{
-			return "http://.." + domainArray[domainArray.length - 2] + "." + domainArray[domainArray.length - 1];
+			return "." + domainArray[domainArray.length - 2] + "." + domainArray[domainArray.length - 1];
 		}
 	}	
 }
@@ -45,24 +45,24 @@ var myExtension = {
 		var ios = Components
   			.classes["@mozilla.org/network/io-service;1"]
   			.getService(Components.interfaces.nsIIOService);
-		var topLevelDomain = getTopLevelDomain(window.content.document.domain);
-		alert(topLevelDomain);
-		var cookieUri = ios.newURI(topLevelDomain, null, null);
+		var topLevelDomain = getTopLevelDomain(window.content.document.domain);		
+		var cookieUri = ios.newURI("http://" + topLevelDomain, null, null);
 		
-		var cookieSvc = Components
-  			.classes["@mozilla.org/cookieService;1"]
-  			.getService(Components.interfaces.nsICookieService);
+		var cookieSvc = Components.classes["@mozilla.org/cookieService;1"].getService(Components.interfaces.nsICookieService);
 		
-		if(!cookieSet) {
-		//	alert("In if");
-			cookieSvc.setCookieString(cookieUri, null, ";" + "RANDOM_NUMBER="+random_number, null);
-			//window.alert("Not set: The cookie is " + window.content.document.cookie);
-		}
-		else {
-		//	alert("In else : " + cookieSet );
-			cookieSvc.setCookieString(cookieUri, null, "RANDOM_NUMBER="+random_number, null);
-			//window.alert("Set: The cookie is " + window.content.document.cookie);						
-		}	    	
+		alert(cookieSvc.getCookieString(cookieUri, null));
+		if(cookieSvc.getCookieString(cookieUri, null).indexOf("XAPITTT_Trusted_Token") == -1)
+		{
+			if(!cookieSet) {
+			alert("If");
+				cookieSvc.setCookieString(cookieUri, null, "XAPITTT_Trusted_Token="+random_number+ "; domain=" + topLevelDomain, null);
+				//window.alert("Not set: The cookie is " + window.content.document.cookie);
+			}
+			else {			
+			alert("Else");
+				cookieSvc.setCookieString(cookieUri, null, "XAPITTT_Trusted_Token="+random_number+ "; domain=" + topLevelDomain, null);							
+			}
+		}		
 		// add event listener for page unload 
     		aEvent.originalTarget.defaultView.addEventListener("unload", function(){ myExtension.onPageUnload(); }, true); 
 	}
